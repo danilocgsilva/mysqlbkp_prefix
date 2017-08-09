@@ -1,6 +1,6 @@
 # How to use
 
-In the same script directory, you must have a file called connectiondata.txt, that will holds the database connection information.
+In the same script directory, you must have a file called ```connectiondata.txt```, that will holds the database connection information.
 
 This file must have the following:
 

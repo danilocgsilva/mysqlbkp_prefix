@@ -55,3 +55,20 @@ do_the_backup() {
         echo $i table has backuped.
     done
 }
+
+
+##
+# Tasks
+#
+if ! [ -f connectiondata.txt ]; then
+    echo There\'s no connectiondata.txt in the directory.
+    echo Check the How_to_use.md from sources: https://raw.githubusercontent.com/danilocgsilva/mysqlbkp_prefix/master/How_to_use.md
+    exit
+fi
+
+##
+# The variable fetching automatically validates the connectiondata.txt.
+# If something required not found, exist.
+# If something not valid, also exits
+#
+
