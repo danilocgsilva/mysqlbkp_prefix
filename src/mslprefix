@@ -1,0 +1,57 @@
+#!/bin/bash
+
+##
+# This function is not part from core function and just helps the question making.
+#
+# This function asks a questions.
+#
+# @param "$1"
+#   The title's question
+# @param $2
+#   The variable to be filled
+askshell_ask() {
+    read -p "$1" $2
+}
+
+
+##
+# This function is not part from core function and just helps the question making.
+# 
+# Forbids the answer to be null
+#
+# @param "$1"
+#   The title's question
+# @param $2
+#   The variable to be filled
+askshell_notempty() {
+
+    askshell_ask "$1" $2 
+    answer=${!2}
+
+    if [ ${#answer} -eq 0 ]; then
+        echo You did not provides any answer to "$1" question. Please, provides something.
+        askshell_notempty "$1" $2
+    fi
+}
+
+
+##
+# If everything is ok, do the backup.
+# @param $1
+#   The database prefix
+# @param $2
+#   The database user
+# @param $3
+#   The database name
+# @param $4
+#   The password
+# @param $5
+#   The hostname
+do_the_backup() {
+    backupfilename=mslbkp.$(date +%y%m%d.%Hh%Mm%Ss).sql
+
+    for i in $(mysql -u$2 -p$4 -h$5 $3 -e "SHOW TABLES" | grep ^$1); do
+        mysqldump -u$2 -p$4 -h$5 $3 $i >> $backupfilename
+        echo $i table has backuped.
+    done
+}
