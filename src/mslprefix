@@ -143,6 +143,6 @@ fi
 
 do_the_backup $prefix $user $dbname $pass $host
 
-if [ $deleteafter -eq yes ]; then
+if [ $deleteafter = yes ]; then
     rm $CONFIGFILE
 fi
