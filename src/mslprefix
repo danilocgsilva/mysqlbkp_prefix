@@ -38,22 +38,6 @@ askshell_notempty() {
 
 
 ##
-# This function is not part from core function and just helps the question making.
-#
-ask_yesorno() {
-
-    askshell_notempty "$1" $2
-    answer=${!2}
-
-    if ! [[ ${#answer} =~ y|n ]]; then
-        echo The only aceptable answer to this question is \"yes\" or \"no\".
-        ask_yesorno "$1" $2
-    fi
-
-}
-
-
-##
 # If everything is ok, do the backup.
 # @param $1
 #   The database prefix
@@ -146,7 +130,16 @@ else
     echo The configuration file will remain.
 fi
 
-ask_yesorno "Are the informations correct? If something is wrong, revise the configuration file."
+echo re the informations correct? If something is wrong, revise the configuration file.
+
+askshell_notempty "Answer \"yes\" or \"no\": " answerpositive
+echo The answer was $answerpositive
+
+if ! [ $answerpositive = yes ]; then
+    echo You answered $answerpositive.
+    echo In doubt, skiping.
+    exit
+fi
 
 do_the_backup $prefix $user $dbname $pass $host
 
