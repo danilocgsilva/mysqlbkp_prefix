@@ -140,7 +140,7 @@ echo "Database host: "$host
 echo "Database pass: ***"
 echo "Database prefix: "$prefix
 
-if [ $deleteafter -eq yes ]; then
+if [ $deleteafter = yes ]; then
     echo The configuration file will be deleted after the operation.
 else
     echo The configuration file will remain.
