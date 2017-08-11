@@ -100,16 +100,16 @@ fi
 # If something required not found, exits.
 # If something not valid, also exits
 #
-if ! eval $CHECKUSER ; then echo $INVALID_CONFIGFILE; exit; fi
+if ! eval $CHECKUSER > /dev/null ; then echo $INVALID_CONFIGFILE; exit; fi
 user=$(eval $CHECKUSER | cut -f2 -d:)
-if ! eval $CHECKPASS ; then echo $INVALID_CONFIGFILE; exit; fi
+if ! eval $CHECKPASS > /dev/null ; then echo $INVALID_CONFIGFILE; exit; fi
 pass=$(eval $CHECKPASS | cut -f2 -d:)
-if ! eval $CHECKDATABASENAME ; then echo $INVALID_CONFIGFILE; exit; fi
+if ! eval $CHECKDATABASENAME > /dev/null ; then echo $INVALID_CONFIGFILE; exit; fi
 dbname=$(eval $CHECKDATABASENAME | cut -f2 -d:)
-if ! eval $CHECKHOST ; then echo $INVALID_CONFIGFILE; exit; fi
+if ! eval $CHECKHOST > /dev/null ; then echo $INVALID_CONFIGFILE; exit; fi
 prefix=$(eval $CHECKPREFIX | cut -f2 -d:)
 
-if eval $CHECKDELETEAFTER; then
+if eval $CHECKDELETEAFTER > /dev/null ; then
     deleteafter=$(eval $CHECKDELETEAFTER | cut -f2 -d:)
     if ! [[ $deleteafter =~ yes|no ]]; then
         echo $INVALID_CONFIGFILE
@@ -119,7 +119,7 @@ else
     deleteafter=yes # The default value
 fi
 
-if eval $CHECKHOST; then
+if eval $CHECKHOST > /dev/null; then
     host=$(eval $CHECKHOST | cut -f2 -d:)
 else
     host=localhost # The default value
