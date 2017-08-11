@@ -9,6 +9,7 @@
 #   The title's question
 # @param $2
 #   The variable to be filled
+#
 askshell_ask() {
     read -p "$1" $2
 }
@@ -23,6 +24,7 @@ askshell_ask() {
 #   The title's question
 # @param $2
 #   The variable to be filled
+#
 askshell_notempty() {
 
     askshell_ask "$1" $2 
@@ -32,6 +34,22 @@ askshell_notempty() {
         echo You did not provides any answer to "$1" question. Please, provides something.
         askshell_notempty "$1" $2
     fi
+}
+
+
+##
+# This function is not part from core function and just helps the question making.
+#
+ask_yesorno() {
+
+    askshell_notempty "$1" $2
+    answer=${!2}
+
+    if ! [[ ${#answer} =~ y|n ]]; then
+        echo The only aceptable answer to this question is \"yes\" or \"no\".
+        ask_yesorno "$1" $2
+    fi
+
 }
 
 
@@ -47,6 +65,7 @@ askshell_notempty() {
 #   The password
 # @param $5
 #   The hostname
+#
 do_the_backup() {
     backupfilename=mslbkp.$(date +%y%m%d.%Hh%Mm%Ss).sql
 
@@ -57,10 +76,20 @@ do_the_backup() {
 }
 
 
+
 ##
 # Tasks
 #
-if ! [ -f connectiondata.txt ]; then
+readonly CONFIGFILE=connectiondata.txt
+readonly INVALID_CONFIGFILE="Something wrong to "$CONFIGFILE". Check for documentation."
+readonly CHECKUSER="cat $CONFIGFILE | grep -i ^user:"
+readonly CHECKPASS="cat $CONFIGFILE | grep -i ^pass:"
+readonly CHECKDATABASENAME="cat $CONFIGFILE | grep -i ^dbname:"
+readonly CHECKHOST="cat $CONFIGFILE | grep -i ^host:"
+readonly CHECKPREFIX="cat $CONFIGFILE | grep -i ^prefix:"
+readonly CHECKDELETEAFTER="cat $CONFIGFILE | grep -i ^deletethisafter:"
+
+if ! [ -f $CONFIGFILE ]; then
     echo There\'s no connectiondata.txt in the directory.
     echo Check the How_to_use.md from sources: https://raw.githubusercontent.com/danilocgsilva/mysqlbkp_prefix/master/How_to_use.md
     exit
@@ -68,7 +97,59 @@ fi
 
 ##
 # The variable fetching automatically validates the connectiondata.txt.
-# If something required not found, exist.
+# If something required not found, exits.
 # If something not valid, also exits
 #
+if ! eval $CHECKUSER ; then echo $INVALID_CONFIGFILE; exit; fi
+user=$(eval $CHECKUSER | cut -f2 -d:)
+if ! eval $CHECKPASS ; then echo $INVALID_CONFIGFILE; exit; fi
+pass=$(eval $CHECKPASS | cut -f2 -d:)
+if ! eval $CHECKDATABASENAME ; then echo $INVALID_CONFIGFILE; exit; fi
+dbname=$(eval $CHECKDATABASENAME | cut -f2 -d:)
+if ! eval $CHECKHOST ; then echo $INVALID_CONFIGFILE; exit; fi
+prefix=$(eval $CHECKPREFIX | cut -f2 -d:)
 
+if eval $CHECKDELETEAFTER; then
+    deleteafter=$(eval $CHECKDELETEAFTER | cut -f2 -d:)
+    if ! [[ $deleteafter =~ yes|no ]]; then
+        echo $INVALID_CONFIGFILE
+        exit
+    fi
+else
+    deleteafter=yes # The default value
+fi
+
+if eval $CHECKHOST; then
+    host=$(eval $CHECKHOST | cut -f2 -d:)
+else
+    host=localhost # The default value
+fi
+
+##
+# Tests the connection
+#
+if ! mysql -u$user -p$pass -h$host $dbname -e "quit"; then
+    echo Something wrong to the mysql credentials.
+    exit
+fi
+
+echo Check for informations from the file configuration:
+echo "Database user: "$user
+echo "Database name: "$dbname
+echo "Database host: "$host
+echo "Database pass: ***"
+echo "Database prefix: "$prefix
+
+if [ $deleteafter -eq yes ]; then
+    echo The configuration file will be deleted after the operation.
+else
+    echo The configuration file will remain.
+fi
+
+ask_yesorno "Are the informations correct? If something is wrong, revise the configuration file."
+
+do_the_backup $prefix $user $dbname $pass $host
+
+if [ $deleteafter -eq yes ]; then
+    rm $CONFIGFILE
+fi

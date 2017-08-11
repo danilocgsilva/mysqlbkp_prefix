@@ -1,6 +1,6 @@
-adfasd
-f
-asdfasdfasd
-fasdafasd
-fasdf
-host:
+user:USERNAME
+pass:PASSWORD
+dbname:DATABASE_NAME
+prefix:SYSTEM_PREFIX
+host:DATABASE_HOST
+deletethisafter:yes|no
