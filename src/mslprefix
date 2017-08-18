@@ -75,13 +75,14 @@ readonly CHECKDELETEAFTER="cat $CONFIGFILE | grep -i ^deletethisafter:"
 
 if ! [ -f $CONFIGFILE ]; then
     echo There\'s no connectiondata.txt in the directory.
-    echo The file must be in the formar:
+    echo The file must be in the format:
     echo user:DATABASEUSER
     echo pass:DATABASEPASSWORD
     echo dbname:DATABASENAME
     echo host:DATABASEHOST
     echo prefix:DATABASEPREFIX
-    echo \(The prefix: is optional\)
+    echo deletethisafter:yes|no
+    echo \(The prefix: and deletethisafter: is optional\)
     echo Or check the How_to_use.md from sources: https://raw.githubusercontent.com/danilocgsilva/mysqlbkp_prefix/master/How_to_use.md
     exit
 fi
