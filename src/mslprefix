@@ -75,7 +75,14 @@ readonly CHECKDELETEAFTER="cat $CONFIGFILE | grep -i ^deletethisafter:"
 
 if ! [ -f $CONFIGFILE ]; then
     echo There\'s no connectiondata.txt in the directory.
-    echo Check the How_to_use.md from sources: https://raw.githubusercontent.com/danilocgsilva/mysqlbkp_prefix/master/How_to_use.md
+    echo The file must be in the formar:
+    echo user:DATABASEUSER
+    echo pass:DATABASEPASSWORD
+    echo dbname:DATABASENAME
+    echo host:DATABASEHOST
+    echo prefix:DATABASEPREFIX
+    echo \(The prefix: is optional\)
+    echo Or check the How_to_use.md from sources: https://raw.githubusercontent.com/danilocgsilva/mysqlbkp_prefix/master/How_to_use.md
     exit
 fi
 
@@ -130,7 +137,7 @@ else
     echo The configuration file will remain.
 fi
 
-echo re the informations correct? If something is wrong, revise the configuration file.
+echo Are the informations correct? If something is wrong, revise the configuration file.
 
 askshell_notempty "Answer \"yes\" or \"no\": " answerpositive
 echo The answer was $answerpositive
